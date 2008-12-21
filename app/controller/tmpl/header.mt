@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8" />
         <meta http-equiv="Cache-Control" content="max-age=0" />
         <meta name="robots" content="noindex,nofollow" />
-        <link rel="stylesheet" href="<?= static_file_path('style-sites.css?v=6') ?>" type="text/css" />
+        <link rel="stylesheet" href="<?= static_file_path('style-sites.css?v=7') ?>" type="text/css" />
         <title>unco</title>
     </head>
     <body>
