@@ -13,3 +13,5 @@ Aggregation: Plagger
 HTML の分割: HTML::Split
 本文抽出: HTML::ExtractContent
 
+HTML::Feature つかうのもいいかも?
+

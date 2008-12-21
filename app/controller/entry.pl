@@ -1,10 +1,7 @@
 use MENTA::Controller;
-use HTML::ExtractContent;
 use HTML::Split;
 use Text::MicroTemplate;
 use Data::Page;
-
-my $extractor = HTML::ExtractContent->new;
 
 sub run {
     # XXX このへんの設定がもうちょいすっきりかけるといいね
@@ -13,7 +10,7 @@ sub run {
     # $entry->{body} was already sanitized by Filter::Scrubber
     ($entry->{body}, my $pager) = sub {
         my $body = shift;
-        my $html = $extractor->extract( $body )->as_html;
+        my $html = _extract($entry->{link}, $body);
         $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
             sprintf '<div><a href="%s">[IMG]</a></div>', escape_html($1)
         }ige;
@@ -30,3 +27,30 @@ sub run {
         $pager,
     );
 }
+
+# -------------------------------------------------------------------------
+
+use HTML::ExtractContent;
+use HTML::TreeBuilder::XPath;
+
+# HTML::ExtractContent でうまくとれないサイトとかは、人力でがんばる
+# TODO: LDR Full Feed の wedata つかう?
+my @extract_map = (
+    qr{^http://twitter\.com/[^/]+/status/\d+$} => 'id("content")',
+);
+my $extractor = HTML::ExtractContent->new;
+sub _extract {
+    my ($link, $body) = @_;
+    while (my ($re, $xpath) = splice(@extract_map, 0, 2)) {
+        if ($link =~ $re) {
+            my $tree = HTML::TreeBuilder::XPath->new;
+            $tree->parse_content($body);
+            my ($content, ) = $tree->findnodes($xpath);
+            $content = $content->as_HTML if $content;
+            $tree = $tree->delete;
+            return $content;
+        }
+    }
+    return $extractor->extract( $body )->as_html;
+}
+

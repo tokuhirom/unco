@@ -1,0 +1,26 @@
+--- !ditz.rubyforge.org,2008-03-06/issue 
+title: support twitter's permalink
+desc: extract content from http://twitter.com/kanose/status/865566704
+type: :feature
+component: unco
+release: 
+reporter: Tokuhiro Matsuno <tokuhirom gmail>
+status: :closed
+disposition: :fixed
+creation_time: 2008-12-21 11:58:50.676876 Z
+references: []
+
+id: 164b4d1b3d6b38fcb0dc646b8f88f13ea2ba50a4
+log_events: 
+- - 2008-12-21 11:58:53.845534 Z
+  - Tokuhiro Matsuno <tokuhirom gmail>
+  - created
+  - ""
+- - 2008-12-21 11:59:21.069698 Z
+  - Tokuhiro Matsuno <tokuhirom gmail>
+  - changed status from unstarted to in_progress
+  - ""
+- - 2008-12-21 12:29:30.626309 Z
+  - Tokuhiro Matsuno <tokuhirom gmail>
+  - closed issue with disposition fixed
+  - implemented.
