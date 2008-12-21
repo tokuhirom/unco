@@ -2,6 +2,8 @@ TODO
 ----
 
 ときどき本文抽出がうまくいかない. ex)
-    http://twitter.com/kanose/status/865566704
-    http://www.pixiv.net/index.php?mode=medium&illust_id=2456494
-
+    - http://www.pixiv.net/index.php?mode=medium&illust_id=2456494
+    - http://d.hatena.ne.jp/Chikirin/mobile?date=20081220
+    - http://kanasoku.blog82.fc2.com/blog-entry-9347.html
+    - http://kanasoku.blog82.fc2.com/blog-entry-9348.html
+本文抽出をクローラー側にまわす

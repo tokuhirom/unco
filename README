@@ -15,3 +15,31 @@ HTML の分割: HTML::Split
 
 HTML::Feature つかうのもいいかも?
 
+crawler architecture
+--------------------
+
+- subscription
+- aggregate rss/atom
+- filter
+    - fetch content(Plagger::Plugin::Filter::ExtractContent)
+    - extract content(ditto)
+    - dedupe(Plagger::Plugin::Filter::Deduped)
+    - if anond, add " - 増田" to title(Plagger::Plugin::Filter::Masuda)
+    - get hatena bookmark count(Plagger::Plugin::Filter::HatenaDiary)
+- store to SQLite(Plagger::Plugin::Store::Unco)
+    - feed
+        - uuid
+        - title
+        - site_url
+        - rss_url
+    - feed_page
+        - uuid
+        - feed_uuid
+        - page_uuid
+    - page
+        - uuid
+        - url
+        - title
+        - content
+        - hatena_bookmark_count
+
