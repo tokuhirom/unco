@@ -11,6 +11,7 @@ sub sql_dbh {
         }
         my $dbh = DBI->connect(@args) or die "DBに接続できません: $DBI::errstr";
         $MENTA::STASH->{sql_dbh} = $dbh;
+        $dbh->{unicode}++;
         $dbh;
     } else {
         $MENTA::STASH->{sql_dbh} ||= do {
@@ -51,6 +52,13 @@ sub sql_select_all {
     undef $sth;
 
     return \@res;
+}
+
+sub sql_select_one {
+    my ($sql, @params) = @_;
+
+    my $rows = sql_select_all($sql, @params);
+    return $rows->[0];
 }
 
 sub sql_select_paginate {

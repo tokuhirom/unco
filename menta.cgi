@@ -20,12 +20,10 @@ MENTA->run_menta({
     application => {
         title => 'MENTA サンプルアプリ',
         sqlitefile => 'app/data/data.sqlite',
-        sql => {
-            dsn => 'dbi:SQLite:app/data/data.sqlite',
-        },
         counter => {
             file => 'app/data/counter.txt'
         },
+        sql_dsn => ['dbi:SQLite:dbname=unco.db', '', ''],
     },
 });
 

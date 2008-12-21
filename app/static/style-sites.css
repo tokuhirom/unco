@@ -1,6 +1,8 @@
 @charset "UTF-8";
 
 body {
+    background-color: black;
+    color: green;
     font-family: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN",
                  "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro",
                  "メイリオ", "Meiryo", "Osaka", "ＭＳ Ｐゴシック",
@@ -93,4 +95,24 @@ pre {
 
 img {
     border: 0 none;
+}
+
+.title {
+    background-color: green;
+    color: black;
+}
+
+hr.hr {
+    background-color: #EAF2F5;
+    color: #EAF2F5;
+    height: 3px;
+}
+
+.more {
+    text-align: right;
+    font-size: x-small;
+}
+
+.footer {
+    font-size: x-small;
 }
