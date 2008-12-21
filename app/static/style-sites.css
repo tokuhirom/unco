@@ -116,3 +116,8 @@ hr.hr {
 .footer {
     font-size: x-small;
 }
+
+.link {
+    font-size: xx-small;
+    text-align: right;
+}

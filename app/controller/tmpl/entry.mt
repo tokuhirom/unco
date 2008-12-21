@@ -1,9 +1,24 @@
-? my ($entry, ) = @_;
+? my ($entry, $pager) = @_;
 ?= render('tmpl/header.mt')
 
 <div class="title"><?= $entry->{title} ?></div>
 <div class="body"><?= $entry->{body} ?></div>
 <div class="link"><a href="<?= $entry->{link} ?>"><?= $entry->{link} ?></a></div>
+
+<hr class="hr" />
+
+? if ($pager->previous_page) {
+<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->previous_page }) ?>" rel="prev" accesskey="4">前</a>
+? } else {
+前
+? }
+|
+? if ($pager->next_page) {
+<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->next_page }) ?>" rel="next" accesskey="6">次</a>
+? } else {
+次
+? }
+(<?= $pager->current_page ?>)
 
 <hr class="hr" />
 
