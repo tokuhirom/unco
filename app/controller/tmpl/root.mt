@@ -19,7 +19,7 @@
 <hr class="hr" />
 
 <div class="footer">
-<a href="<?= uri_for('index#top', {t => time()}) ?>" accesskey="0">go to top</a>
+<a href="<?= uri_for('index#top', {t => time()}) ?>" accesskey="0">go to top[0]</a><br />
 Powered by <a href="http://plagger.org/">Plagger</p>
 </div>
 
