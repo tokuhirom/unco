@@ -8,15 +8,15 @@
 <hr class="hr" />
 
 ? if ($pager->previous_page) {
-<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->previous_page }) ?>" rel="prev" accesskey="4">前</a>
+<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->previous_page }) ?>" rel="prev" accesskey="4">&lt;前</a>
 ? } else {
-前
+&lt;前
 ? }
 |
 ? if ($pager->next_page) {
-<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->next_page }) ?>" rel="next" accesskey="6">次</a>
+<a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->next_page }) ?>" rel="next" accesskey="6">次&gt;</a>
 ? } else {
-次
+次&gt;
 ? }
 (<?= $pager->current_page ?>)
 
