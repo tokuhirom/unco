@@ -11,9 +11,12 @@ sub run {
     ($entry->{body}, my $pager) = sub {
         my $body = shift;
         my $html = _extract($entry->{link}, $body);
-        $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
-            sprintf '<div><a href="%s">[IMG]</a></div>', escape_html($1)
-        }ige;
+        unless (mobile_agent()->is_non_mobile) {
+            # 画像を表示しない
+            $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
+                sprintf '<div><a href="%s">[IMG]</a></div>', escape_html($1)
+            }ige;
+        }
         my @pages = HTML::Split->split(html => $html, length => 2048);
         my $page = param('page')||1;
         my $ret = Text::MicroTemplate::encoded_string($pages[$page - 1]);
