@@ -14,6 +14,9 @@ sub run {
     ($entry->{body}, my $pager) = sub {
         my $body = shift;
         my $html = $extractor->extract( $body )->as_html;
+        $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
+            sprintf '<div><a href="%s">[IMG]</a></div>', escape_html($1)
+        }ige;
         my @pages = HTML::Split->split(html => $html, length => 2048);
         my $page = param('page')||1;
         my $ret = Text::MicroTemplate::encoded_string($pages[$page - 1]);
