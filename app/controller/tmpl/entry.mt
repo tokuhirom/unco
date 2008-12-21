@@ -8,6 +8,7 @@
 <hr class="hr" />
 
 ? if ($pager->last_page != 1) {
+    <div class="pager">
     <? if ($pager->previous_page) { ?>
         <a href="<?= uri_for('entry', { entry_id => $entry->{id}, page => $pager->previous_page }) ?>" rel="prev" accesskey="4">&lt;前</a>
     <? } else { ?>
@@ -20,6 +21,7 @@
     次&gt;
     <? } ?>
     (<?= $pager->current_page ?>)
+    </div>
 
     <hr class="hr" />
 ? }

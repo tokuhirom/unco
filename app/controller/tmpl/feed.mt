@@ -11,6 +11,7 @@
 
 <hr class="hr" />
 
+<div class="pager">
 ? if ($pager->{page} == 1) {
 前
 ? } else {
@@ -22,6 +23,7 @@
 ? } else {
 次
 ? }
+</div>
 
 <div class="footer">
 <a href="<?= uri_for('index', {t => time()}) ?>" accesskey="0">go to top</a><br />
