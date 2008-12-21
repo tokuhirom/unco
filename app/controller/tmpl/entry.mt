@@ -3,6 +3,7 @@
 
 <div class="title"><?= $entry->{title} ?></div>
 <div class="body"><?= $entry->{body} ?></div>
+<div class="link"><a href="<?= $entry->{link} ?>"><?= $entry->{link} ?></a></div>
 
 <hr class="hr" />
 
