@@ -20,7 +20,7 @@
     <? } else { ?>
     次&gt;
     <? } ?>
-    (<?= $pager->current_page ?>)
+    (<?= $pager->current_page ?>/<?= $pager->last_page ?>)
     </div>
 
     <hr class="hr" />
