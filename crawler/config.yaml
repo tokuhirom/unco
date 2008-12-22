@@ -1,6 +1,6 @@
 global:
   timezone: Asia/Tokyo
-  assets_path: /home/tokuhirom/project/plagger-hateb-hotentry-chtml/assets/
+  assets_path: /home/tokuhirom/project/unco/crawler/assets/
   log:
     level: info
     #level: debug
