@@ -1,11 +1,11 @@
-? my ($feed, $entries, $pager) = @_;
+? my ($feed, $pages, $pager) = @_;
 ?= render('tmpl/header.mt')
 
 <div class="title"><?= $feed->{title} ?></div>
 
 <ul>
-<? for my $entry (@{$entries}) { ?>
-    <li><a href="<?= uri_for('entry', {entry_id => $entry->{id}}) ?>"><?= $entry->{title} ?></a></li>
+<? for my $page (@{$pages}) { ?>
+    <li><a href="<?= uri_for('page', {page_id => $page->{id}}) ?>"><?= $page->{title} ?></a>[<?= $page->{hatena_bookmark_count} ?>users]</li>
 <? } ?>
 </ul>
 

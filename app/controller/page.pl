@@ -6,11 +6,11 @@ use Data::Page;
 sub run {
     # XXX このへんの設定がもうちょいすっきりかけるといいね
     sql_dbh(@{ config()->{application}->{sql_dsn} });
-    my $entry = sql_select_one('SELECT * FROM entry WHERE id=? LIMIT 1', param('entry_id'));
-    # $entry->{body} was already sanitized by Filter::Scrubber
-    ($entry->{body}, my $pager) = sub {
+    my $page = sql_select_one('SELECT * FROM page WHERE id=? LIMIT 1', param('page_id'));
+    # $page->{body} was already sanitized by Filter::Scrubber
+    ($page->{body}, my $pager) = sub {
         my $body = shift;
-        my $html = _extract($entry->{link}, $body);
+        my $html = _extract($page->{link}, $body);
         unless (mobile_agent()->is_non_mobile) {
             # 画像を表示しない
             $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
@@ -22,11 +22,11 @@ sub run {
         my $ret = Text::MicroTemplate::encoded_string($pages[$page - 1]);
         my $pager = Data::Page->new(scalar(@pages), 1, $page);
         return ($ret, $pager);
-    }->($entry->{body});
+    }->($page->{body});
 
     render_and_print(
-        'tmpl/entry.mt',
-        $entry,
+        'tmpl/page.mt',
+        $page,
         $pager,
     );
 }
