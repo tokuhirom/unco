@@ -9,14 +9,31 @@ plugins:
   - module: Subscription::Config
     config:
       feed:
-        - url: http://api.pathtraq.com/news_ja?__lang=ja
+        - url: http://twitter.com/statuses/user_timeline/3295761.rss
+        - url: http://twitter.com/statuses/user_timeline/713323.rss
 
-  - module: Filter::HatenaBookmarkUsersCount
-  - module: Filter::HatenaAnonDiary
-
-  - module: Publish::Debug
-
-  - module: Store::Unco
+# - module: Filter::HatenaBookmarkUsersCount
+# - module: Filter::HatenaAnonDiary
+  - module: Filter::EntryFullText
+    rule:
+      expression: $args->{entry}->link !~ m{.*\.(jpg|pdf|swf|mov)$}
     config:
-      connect_info: [ 'dbi:SQLite:/home/tokuhirom/project/unco/crawler/debug.db', ]
+      store_html_on_failure: 1
+      force_upgrade: 1
+
+  - module: Filter::EFTEX
+    config:
+      auto_pagerize_urls:
+        - file:///home/tokuhirom/project/unco/autopagerize.json
+
+# - module: Publish::Debug
+  - module: Publish::Feed
+    config:
+      format: RSS
+      dir: /tmp/
+      filename: my_%t.rss
+
+# - module: Store::Unco
+#   config:
+#     connect_info: [ 'dbi:SQLite:/home/tokuhirom/project/unco/crawler/debug.db', ]
 

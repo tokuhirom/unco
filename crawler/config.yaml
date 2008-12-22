@@ -2,8 +2,8 @@ global:
   timezone: Asia/Tokyo
   assets_path: /home/tokuhirom/project/unco/crawler/assets/
   log:
-    level: info
-    #level: debug
+    # level: info
+    level: debug
 
 plugins:
   - module: Subscription::Config
@@ -25,20 +25,27 @@ plugins:
       expression: $args->{entry}->link !~ m{.*\.(jpg|pdf|swf|mov)$}
     config:
       store_html_on_failure: 1
+      # はてブの詳細情報がでてきちゃうので。
       force_upgrade: 1
 
-  - module: Filter::ResolveRelativeLink
-
-  - module: Filter::HTMLScrubber
+  # AutoPagerize でアップグレードしたる
+  - module: Filter::EFTEX
     config:
-      rules:
-        comment: 1
-        style: 0
-        script: 0
+      auto_pagerize_urls:
+        - file:///home/tokuhirom/project/unco/autopagerize.json
+
+  - module: Filter::ResolveRelativeLink
 
   - module: Filter::HatenaAnonDiary
   - module: Filter::HatenaDiaryKeywordUnlink
   - module: Filter::HatenaBookmarkUsersCount
+
+  - module: Filter::HTMLScrubber
+    config:
+      rules:
+        comment: 0
+        style: 0
+        script: 0
 
   - module: Publish::CHTML
     config:
@@ -47,12 +54,7 @@ plugins:
       mobile_gw: http://mgw.hatena.ne.jp/?
       encoding: utf-8
 
-# - module: Store::DBIC
-#   config:
-#     schema_class: Plagger::Schema::SQLite
-#     connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
-
   - module: Store::Unco
     config:
-      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco2.db', ]
+      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
 
