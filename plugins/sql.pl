@@ -10,8 +10,8 @@ sub sql_dbh {
             undef $MENTA::STASH->{sql_dbh};
         }
         my $dbh = DBI->connect(@args) or die "DBに接続できません: $DBI::errstr";
-        $MENTA::STASH->{sql_dbh} = $dbh;
         $dbh->{unicode} = 1;
+        $MENTA::STASH->{sql_dbh} = $dbh;
         $dbh;
     } else {
         $MENTA::STASH->{sql_dbh} ||= do {
