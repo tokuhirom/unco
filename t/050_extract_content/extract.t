@@ -7,7 +7,7 @@ use HTTP::Response::Encoding;
 use Encode;
 use utf8;
 
-plan tests => 9;
+plan tests => 13;
 
 run {
     my $block = shift;
@@ -44,6 +44,14 @@ sub decode_content {
 }
 
 __END__
+
+===
+--- input: http://alfalfa.livedoor.biz/archives/51408284.html
+--- expected
+contains_string $_, '童貞の俺にマジレスきぼん';
+contains_string $_, 'ちなみにあまり目標値を高く設定すると、オーバーシュートして逝く恐れがあるので、';
+lacks_string $_, 'まぁ全部演技なんだけどな';
+lacks_string $_, 'コメントありがとう御座います';
 
 ===
 --- input: http://d.hatena.ne.jp/fk_2000/20081222/p1

@@ -32,7 +32,7 @@ plugins:
   - module: Filter::HTMLScrubber
     config:
       rules:
-        comment: 0
+        comment: 1
         style: 0
         script: 0
 
