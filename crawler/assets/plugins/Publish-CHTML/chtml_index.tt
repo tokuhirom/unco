@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD Compact HTML 1.0 Draft//EN">
+<html><head>
+    <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="max-age=0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <link rel="stylesheet" href="styles-site.css" type="text/css" />
+    <title>[% conf.title | html %]</title>
+</head>
+<body>
+<div class="title">[% conf.title | html %]</div>
+<hr size="1">
+[% FOREACH feed = feeds -%]
+<a href="[% feed.feed_link | html %]">[% feed.title | html %]</a>([% feed.count %])<br>
+<span class="date">[% feed.lastdate.strftime('%Y-%m-%d %H:%M') %]</span>
+[% UNLESS loop.last %]<hr size="1" width="50%">[% END %]
+[%- END %]
+[% IF earlier %]<hr size="1"><a href="./[% earlier %].html" accesskey="4">&lt; earlier[4]</a><br>[% END %]
+<div class="footer">
+Powered by <a href="http://plagger.org/">Plagger</a><br />
+updated on: [% modified.strftime('%Y-%m-%d %H:%M') %]
+</div>
+</body>
+</html>

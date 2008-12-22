@@ -1,0 +1,53 @@
+global:
+  timezone: Asia/Tokyo
+  assets_path: /home/tokuhirom/project/plagger-hateb-hotentry-chtml/assets/
+  log:
+    level: info
+    #level: debug
+
+plugins:
+  - module: Subscription::Config
+    config:
+      feed:
+        - url: http://b.hatena.ne.jp/entrylist?mode=rss&sort=hot&threshold=5
+        - url: http://b.hatena.ne.jp/hotentry?mode=rss
+        - url: http://b.hatena.ne.jp/hotentry/news/rss
+        - url: http://digg.com/technology/popular/24hours
+        - url: http://api.pathtraq.com/newsite
+        - url: http://api.pathtraq.com/popular?__lang=ja
+
+  - module: Filter::EntryFullText
+    rule:
+      expression: $args->{entry}->link !~ m{.*\.(jpg|pdf|swf|mov)$}
+    config:
+      store_html_on_failure: 1
+      force_upgrade: 1
+
+  - module: Filter::ResolveRelativeLink
+
+  - module: Filter::HTMLScrubber
+    config:
+      rules:
+        comment: 0
+        style: 0
+        script: 0
+
+  - module: Filter::HatenaDiaryKeywordUnlink
+  - module: Filter::HatenaBookmarkUsersCount
+
+  - module: Filter::Rule
+    rule:
+      module: Deduped
+
+  - module: Publish::CHTML
+    config:
+      title: news aggregator
+      work: /var/www/i/
+      mobile_gw: http://mgw.hatena.ne.jp/?
+      encoding: utf-8
+
+  - module: Store::DBIC
+    config:
+      schema_class: Plagger::Schema::SQLite
+      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
+

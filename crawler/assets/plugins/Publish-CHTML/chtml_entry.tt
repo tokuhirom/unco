@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD Compact HTML 1.0 Draft//EN">
+<html><head>
+    <meta name="robots" content="noindex,nofollow" />
+    <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="max-age=0" />
+    <link rel="stylesheet" href="styles-site.css" type="text/css" />
+    <title>[% (entry.title || '(no-title)') | html %]</title>
+</head>
+<body>
+<a href="../">[% feed.title %]</a><br>
+[% (entry.title || '(no-title)') | html %]
+[% IF entry.date %]<br>Posted on [% entry.date.strftime('%Y-%m-%d(%a) %H:%M') %][% END %]
+[% IF entry.author %]<br>by [% entry.author | html %][% END %]
+<hr size="1">
+[% IF entry.body %]<pre>[% strip_html(entry.body) %]</pre><hr size="1">[% END %][% IF conf.mobile_gw %]&gt;<a href="[% conf.mobile_gw %][% entry.permalink | uri %]">permalink</a><br>[% END %]
+[% FOREACH widget = entry.widgets %] | [% widget.html(entry) %][% END %]<br>
+<a href="../../../" accesskey="0">top</a>
+</body>
+</html>

@@ -1,0 +1,20 @@
+pre {
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  line-height: 140%;
+}
+
+.date {
+    font-size: small;
+}
+
+.footer {
+    font-size: small;
+}
+
+.header {
+    font-size: small;
+}

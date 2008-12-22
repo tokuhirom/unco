@@ -1,0 +1,20 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD Compact HTML 1.0 Draft//EN">
+<html><head>
+    <meta http-equiv="Content-Type"  content="text/html; charset=UTF-8" />
+    <meta http-equiv="Cache-Control" content="max-age=0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>[% feed.title %]</title>
+</head>
+<body>
+[% feed.title %]<br>
+<hr size="1">
+[% FOREACH entry = feed.entries -%]
+<a href="[% entry.feed2entry_link | html %]">[% (entry.title || '(no-title)') | html %]</a>
+[% IF entry.date %]<br><span class="date">[% entry.date.strftime('%Y-%m-%d(%a) %H:%M') %]</span>[% END %]
+[% UNLESS loop.last %]<hr size="1" width="50%">[% END %]
+[%- END %]
+<hr size="1">
+[% IF earlier %]<a href="./[% earlier %].html" accesskey="4">&lt; earlier[4]</a><br>[% END %]
+<a href="../../" accesskey="0">top</a>
+</body>
+</html>
