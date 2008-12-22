@@ -8,7 +8,7 @@
     <div class="feed_title"><?= $feed->{title} ?></div>
     <ul>
     <? for my $page (@{$feed->{pages}}) { ?>
-        <li><a href="<?= uri_for('page', {page_id => $page->{id}}) ?>"><?= $page->{title} ?></a>[<?= $page->{hatena_bookmark_count} ?>users]</li>
+        <li><a href="<?= uri_for('page', {page_id => $page->{id}}) ?>"><?= $page->{title} ?></a><? if ($page->{hatena_bookmark_count}) { ?>[<?= $page->{hatena_bookmark_count} ?>users]<? } ?></li>
     <? } ?>
     </ul>
     <div class="more"><a href="<?= uri_for('feed', {feed_id => $feed->{id}}) ?>">more</a></div>

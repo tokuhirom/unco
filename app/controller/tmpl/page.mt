@@ -3,7 +3,7 @@
 
 <div class="title"><?= $page->{title} ?></div>
 <div class="body"><?= $page->{body} ?></div>
-<div class="link"><a href="http://mgw.hatena.ne.jp/?<?= $page->{url} ?>"><?= $page->{url} ?></a>[<?= $page->{hatena_bookmark_count} ?>users]</div>
+<div class="link"><a href="http://mgw.hatena.ne.jp/?<?= $page->{url} ?>"><?= $page->{url} ?></a><? if ($page->{hatena_bookmark_count}) { ?>[<?= $page->{hatena_bookmark_count} ?>users]<? } ?></div>
 
 <hr class="hr" />
 

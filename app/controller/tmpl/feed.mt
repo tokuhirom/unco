@@ -5,7 +5,7 @@
 
 <ul>
 <? for my $page (@{$pages}) { ?>
-    <li><a href="<?= uri_for('page', {page_id => $page->{id}}) ?>"><?= $page->{title} ?></a>[<?= $page->{hatena_bookmark_count} ?>users]</li>
+    <li><a href="<?= uri_for('page', {page_id => $page->{id}}) ?>"><?= $page->{title} ?></a><? if ($page->{hatena_bookmark_count}) { ?>[<?= $page->{hatena_bookmark_count} ?>users]<? } ?></li>
 <? } ?>
 </ul>
 
