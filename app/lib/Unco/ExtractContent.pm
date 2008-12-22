@@ -15,7 +15,7 @@ if ($ENV{DEBUG}) {
 my @extract_map = (
     qr{^http://twitter\.com/[^/]+/status/\d+$} => 'id("content")',
     qr{^http://kanasoku\.blog82\.fc2\.com/blog-entry-\d+\.html$} => '//div[@class="entry"]',
-    qr{^http://d\.hatena\.ne\.jp/[^/]+/\d+/p\d+$} => '//div[@class="body"]',
+    qr{^http://alfalfa\.livedoor\.biz/archives/\d+\.html$} => '//div[@class="blogbody"]/div[@class="main" or @class="mainmore"]',
 );
 my $extractor = HTML::ExtractContent->new;
 
@@ -33,10 +33,15 @@ sub extract {
             DEBUG("XPATH $link");
             my $tree = HTML::TreeBuilder::XPath->new;
             $tree->parse_content($body);
-            my ($content, ) = $tree->findnodes($xpath);
-            $content = $content->as_HTML(q{<>&"'}) if $content;
-            $tree = $tree->delete;
-            return $content;
+            my @contents = $tree->findnodes($xpath);
+            if (@contents) {
+                my $res = join "\n", map { $_->as_HTML(q{<>&"'}) } @contents;
+                $tree = $tree->delete;
+                return $res;
+            } else {
+                $tree = $tree->delete;
+                next;
+            }
         }
     }
     DEBUG("$extractor $link");
