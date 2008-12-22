@@ -32,6 +32,7 @@ plugins:
         style: 0
         script: 0
 
+  - module: Filter::HatenaAnonDiary
   - module: Filter::HatenaDiaryKeywordUnlink
   - module: Filter::HatenaBookmarkUsersCount
 
