@@ -43,3 +43,23 @@ crawler architecture
         - content
         - hatena_bookmark_count
 
+日本語本文抽出について考える
+----------------------------
+
+構造にもとづいて本文抽出する系のモジュールは、perl だと HTML::Feature と HTML::ExtractContent がある。
+
+    - メジャーなサイトについては、XPath で本文抽出するのもよしとする
+        - wedata の LDR Full Text のやつをつかうのもよいだろう
+    - 構造にもとづく本文抽出は失敗する確率がある。
+    - 無駄な情報がない方がベターな本文抽出である
+    - すくなすぎるよりはおおすぎるほうがよい
+    - HTML のかたちでとりだせることが重要だ
+
+HTML::Feature は、HTML からの本文抽出において本質的ではない部分が多い。便利ではあるのだけど。
+やたらと input/output でデータを decode/encode したがるのが困りもの。flagged utf8 をわたすから、
+flagged utf8 を返しておくれといいたい。
+
+HTML::ExtractContent は、いいかんじに抽出できるケースが多いのだけど、2ch まとめサイトとかの抽出に
+失敗することが多い印象。2ch まとめサイトは広告が多いというのも敗因の一つか。
+    e.g. http://kanasoku.blog82.fc2.com/blog-entry-9347.html
+

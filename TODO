@@ -1,9 +1,20 @@
 TODO
 ----
 
-ときどき本文抽出がうまくいかない. ex)
+HTML::ExtractContent はときどき本文抽出がうまくいかない. ex)
     - http://www.pixiv.net/index.php?mode=medium&illust_id=2456494
     - http://d.hatena.ne.jp/Chikirin/mobile?date=20081220
     - http://kanasoku.blog82.fc2.com/blog-entry-9347.html
     - http://kanasoku.blog82.fc2.com/blog-entry-9348.html
+    - http://news23vip.blog109.fc2.com/blog-entry-1532.html
+    - http://alfalfa.livedoor.biz/archives/51408069.html
+    - http://guideline.livedoor.biz/archives/51151299.html
+    - http://alfalfa.livedoor.biz/archives/51408478.html
+    - http://goyaku.seesaa.net/article/111521882.html
+    - http://www.nicovideo.jp/watch/sm5617064
+        - もうちょいなんとか、メタデータだすとかなんとか。
 本文抽出をクローラー側にまわす
+pager 用に uri_with が必要
+DB の設定はやっぱり一箇所 config にかきたいよね
+HTML::Feature と HTML::ExtractContent のこと。
+
