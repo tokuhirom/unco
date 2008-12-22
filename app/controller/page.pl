@@ -2,6 +2,7 @@ use MENTA::Controller;
 use HTML::Split;
 use Text::MicroTemplate;
 use Data::Page;
+use Unco::ExtractContent;
 
 sub run {
     # XXX このへんの設定がもうちょいすっきりかけるといいね
@@ -10,7 +11,7 @@ sub run {
     # $page->{body} was already sanitized by Filter::Scrubber
     ($page->{body}, my $pager) = sub {
         my $body = shift;
-        my $html = _extract($page->{link}, $body);
+        my $html = Unco::ExtractContent->extract($page->{url}, $body);
         unless (mobile_agent()->is_non_mobile) {
             # 画像を表示しない
             $html =~ s{<img[^>]+src=['"]([^'">]+)['"][^>]*>}{
@@ -29,31 +30,5 @@ sub run {
         $page,
         $pager,
     );
-}
-
-# -------------------------------------------------------------------------
-
-use HTML::ExtractContent;
-use HTML::TreeBuilder::XPath;
-
-# HTML::ExtractContent でうまくとれないサイトとかは、人力でがんばる
-# TODO: LDR Full Feed の wedata つかう?
-my @extract_map = (
-    qr{^http://twitter\.com/[^/]+/status/\d+$} => 'id("content")',
-);
-my $extractor = HTML::ExtractContent->new;
-sub _extract {
-    my ($link, $body) = @_;
-    while (my ($re, $xpath) = splice(@extract_map, 0, 2)) {
-        if ($link =~ $re) {
-            my $tree = HTML::TreeBuilder::XPath->new;
-            $tree->parse_content($body);
-            my ($content, ) = $tree->findnodes($xpath);
-            $content = $content->as_HTML if $content;
-            $tree = $tree->delete;
-            return $content;
-        }
-    }
-    return $extractor->extract( $body )->as_html;
 }
 
