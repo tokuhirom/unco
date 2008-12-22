@@ -1,0 +1,17 @@
+
+global:
+  timezone: Asia/Tokyo
+  assets_path: /home/tokuhirom/project/unco/crawler/assets/
+  log:
+    level: debug
+
+plugins:
+  - module: Subscription::Config
+    config:
+      feed:
+        - url: http://anond.hatelabo.jp/rss
+
+  - module: Filter::HatenaAnonDiary
+
+  - module: Publish::Debug
+
