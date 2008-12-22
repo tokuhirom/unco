@@ -3,7 +3,7 @@
 
 <div class="title"><?= $page->{title} ?></div>
 <div class="body"><?= $page->{body} ?></div>
-<div class="link"><a href="<? unless (mobile_agent()->is_non_mobile) { ?>http://mgw.hatena.ne.jp/?<? } ?><?= $page->{url} ?>"><?= $page->{url} ?></a><? if ($page->{hatena_bookmark_count}) { ?>[<?= $page->{hatena_bookmark_count} ?>users]<? } ?></div>
+<div class="link"><a href="<? unless (mobile_agent()->is_non_mobile) { ?>http://mgw.hatena.ne.jp/?<? } ?><?= $page->{url} ?>"><?= $page->{url} ?></a><? if ($page->{hatena_bookmark_count}) { ?>[<a href="http://b.hatena.ne.jp/entry/<?= $page->{url} ?>"><?= $page->{hatena_bookmark_count} ?>users</a>]<? } ?></div>
 
 <hr class="hr" />
 
