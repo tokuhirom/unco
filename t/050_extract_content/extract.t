@@ -7,7 +7,7 @@ use HTTP::Response::Encoding;
 use Encode;
 use utf8;
 
-plan tests => 8;
+plan tests => 9;
 
 run {
     my $block = shift;
@@ -56,6 +56,7 @@ lacks_string $_, 'hatena-asin-recommend';
 --- expected
 contains_string $_, 'コーヒーオフ、ありがとうございました';
 lacks_string $_, 'リンク元';
+lacks_string $_, 'hatena-asin-recommend';
 
 ===
 --- input: http://kanasoku.blog82.fc2.com/blog-entry-9289.html
