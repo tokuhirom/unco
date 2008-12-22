@@ -7,7 +7,7 @@ use HTTP::Response::Encoding;
 use Encode;
 use utf8;
 
-plan tests => 6;
+plan tests => 8;
 
 run {
     my $block = shift;
@@ -44,6 +44,12 @@ sub decode_content {
 }
 
 __END__
+
+===
+--- input: http://d.hatena.ne.jp/fk_2000/20081222/p1
+--- expected
+contains_string $_, '上から目線でも悪意や他意が無ければ反感買うことも無いし、むしろ上から目線キャラを求めている人が多いんだよね。';
+lacks_string $_, 'hatena-asin-recommend';
 
 ===
 --- input: http://d.hatena.ne.jp/repon/20081222/p2
