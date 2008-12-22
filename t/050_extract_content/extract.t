@@ -7,7 +7,7 @@ use HTTP::Response::Encoding;
 use Encode;
 use utf8;
 
-plan tests => 2;
+plan tests => 6;
 
 run {
     my $block = shift;
@@ -44,6 +44,12 @@ sub decode_content {
 }
 
 __END__
+
+===
+--- input: http://d.hatena.ne.jp/repon/20081222/p2
+--- expected
+contains_string $_, 'コーヒーオフ、ありがとうございました';
+lacks_string $_, 'リンク元';
 
 ===
 --- input: http://kanasoku.blog82.fc2.com/blog-entry-9289.html

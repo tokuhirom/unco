@@ -9,6 +9,7 @@ use HTML::TreeBuilder::XPath;
 my @extract_map = (
     qr{^http://twitter\.com/[^/]+/status/\d+$} => 'id("content")',
     qr{^http://kanasoku\.blog82\.fc2\.com/blog-entry-\d+\.html$} => '//div[@class="entry"]',
+    qr{^http://d\.hatena\.ne\.jp/[^/]+/\d+/p\d+$} => '//div[@class="body"]',
 );
 my $extractor = HTML::ExtractContent->new;
 
@@ -16,7 +17,8 @@ sub extract {
     my ($class, $link, $body) = @_;
     die "missing url"  unless $link;
     die "missing body" unless $body;
-    while (my ($re, $xpath) = splice(@extract_map, 0, 2)) {
+    my @map = @extract_map;
+    while (my ($re, $xpath) = splice(@map, 0, 2)) {
         if ($link =~ $re) {
             my $tree = HTML::TreeBuilder::XPath->new;
             $tree->parse_content($body);
