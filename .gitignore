@@ -4,3 +4,4 @@ blib/
 kushi.db
 unco.db
 META.yml
+crawler/debug.db

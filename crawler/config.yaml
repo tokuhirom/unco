@@ -16,6 +16,10 @@ plugins:
         - url: http://api.pathtraq.com/newsite
         - url: http://api.pathtraq.com/popular?__lang=ja
 
+  - module: Filter::Rule
+    rule:
+      module: Deduped
+
   - module: Filter::EntryFullText
     rule:
       expression: $args->{entry}->link !~ m{.*\.(jpg|pdf|swf|mov)$}
@@ -36,10 +40,6 @@ plugins:
   - module: Filter::HatenaDiaryKeywordUnlink
   - module: Filter::HatenaBookmarkUsersCount
 
-  - module: Filter::Rule
-    rule:
-      module: Deduped
-
   - module: Publish::CHTML
     config:
       title: news aggregator
@@ -47,8 +47,12 @@ plugins:
       mobile_gw: http://mgw.hatena.ne.jp/?
       encoding: utf-8
 
-  - module: Store::DBIC
+# - module: Store::DBIC
+#   config:
+#     schema_class: Plagger::Schema::SQLite
+#     connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
+
+  - module: Store::Unco
     config:
-      schema_class: Plagger::Schema::SQLite
-      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
+      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco2.db', ]
 
