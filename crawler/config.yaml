@@ -56,5 +56,5 @@ plugins:
 
   - module: Store::Unco
     config:
-      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
+      connect_info: [ 'dbi:SQLite:/usr/local/webapp/unco/unco.db', ]
 

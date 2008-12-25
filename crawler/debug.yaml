@@ -9,8 +9,7 @@ plugins:
   - module: Subscription::Config
     config:
       feed:
-        - url: http://twitter.com/statuses/user_timeline/3295761.rss
-        - url: http://twitter.com/statuses/user_timeline/713323.rss
+        - url: http://b.hatena.ne.jp/entrylist?sort=hot&threshold=&url=http%3A%2F%2Fanond.hatelabo.jp%2F&mode=rss
 
 # - module: Filter::HatenaBookmarkUsersCount
 # - module: Filter::HatenaAnonDiary
