@@ -1,9 +1,10 @@
 global:
   timezone: Asia/Tokyo
-  assets_path: /home/tokuhirom/project/unco/crawler/assets/
+  assets_path: /home/tokuhirom/dev/unco/crawler/assets/
   log:
+    level: error
     # level: info
-    level: debug
+    # level: debug
 
 plugins:
   - module: Subscription::Config
@@ -32,7 +33,7 @@ plugins:
   - module: Filter::EFTEX
     config:
       auto_pagerize_urls:
-        - file:///home/tokuhirom/project/unco/autopagerize.json
+        - file:///home/tokuhirom/dev/unco/autopagerize.json
 
   - module: Filter::ResolveRelativeLink
 
@@ -56,5 +57,5 @@ plugins:
 
   - module: Store::Unco
     config:
-      connect_info: [ 'dbi:SQLite:/usr/local/unco/unco.db', ]
+      connect_info: [ 'dbi:SQLite:/usr/local/webapp/unco/unco.db', ]
 
