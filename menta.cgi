@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 BEGIN {
-    unshift @INC, 'lib', 'extlib', 'app/lib';
+    unshift @INC, 'cgi-extlib-perl', 'lib', 'extlib', 'app/lib';
 };
 use MENTA;
 # -- ここまではおまじない --
