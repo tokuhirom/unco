@@ -38,8 +38,11 @@ sub _filter {
     # HTML まるっともってきたときの処理
     if ($args->{entry}->body() =~ /<html/) {
         Plagger->context->log(debug => "extract by EFTEX");
-        my $html = $args->{entry}->body;
-        $args->{entry}->body(_extract($self->{extractor}, $self->{pagerize_meta}, $html, $args->{entry}->link));
+        eval {
+            my $html = $args->{entry}->body;
+            $args->{entry}->body(_extract($self->{extractor}, $self->{pagerize_meta}, $html, $args->{entry}->link));
+        };
+        warn $@ if $@;
     }
 
     return 1;
