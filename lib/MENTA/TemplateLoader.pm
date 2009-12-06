@@ -47,7 +47,7 @@ sub __compile {
         die "テンプレートコンパイルエラー\n$@" if $@;
         $ret;
     };
-    my $out = $compiled->($mt, @params);
+    my $out = $compiled->(@params);
     __update_cache($path, $code);
     return $out;
 }
@@ -71,7 +71,6 @@ sub __eval_builder {
 package MENTA::TemplateLoader::Instance;
 #line 1
 sub {
-    my \$_mt = shift;
     my \$out = Text::MicroTemplate::encoded_string((
         $code
     )->(\@_));
