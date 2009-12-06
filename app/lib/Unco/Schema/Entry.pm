@@ -16,7 +16,7 @@ __PACKAGE__->belongs_to( feed => 'Unco::Schema::Feed' );
 __PACKAGE__->inflate_column(
     date => {
         inflate =>
-            sub { DateTime::Lite->from_epoch( epoch => shift, time_zone => 'local' ) },
+            sub { DateTime->from_epoch( epoch => shift, time_zone => 'local' ) },
         deflate => sub { shift->set_time_zone('local')->epoch },
     }
 );

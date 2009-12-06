@@ -3,7 +3,7 @@ use base 'DBIx::Class::Schema';
 use strict;
 use warnings;
 
-use DateTime::Lite;
+use DateTime;
 
 __PACKAGE__->load_classes;
 
