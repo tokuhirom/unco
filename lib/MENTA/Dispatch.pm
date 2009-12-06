@@ -4,13 +4,14 @@ use warnings;
 use utf8;
 
 sub dispatch {
-    my $path = $ENV{PATH_INFO} || '/';
+    my ($class, $env) = @_;
+    my $path = $env->{PATH_INFO} || '/';
     $path =~ s!^/+!!g;
     $path ||= 'index';
     if ($path =~ m{^plugin/([a-z0-9_-]+)/([a-z0-9_]+)$}) {
         my ($plugin_name, $meth) = ($1, $2);
         $meth = "do_$meth";
-        my $pkg = MENTA::Util::load_plugin($plugin_name);
+        my $pkg = MENTA::Util::load_plugin($plugin_name) or die "Cannot load plugin: $plugin_name";
         $pkg->$meth();
     } elsif ($path =~ m{^[a-z0-9_/]+$}) {
         $path =~ s!/$!/index!;
@@ -46,7 +47,7 @@ sub dispatch {
     } elsif ($path ne 'menta.cgi' && -f (MENTA::base_dir() . "app/$path") && $path =~ /^static\//) {
         show_static("app/$path");
     } elsif ($path =~ /^(?:crossdomain\.xml|favicon\.ico|robots\.txt)$/) {
-        print "status: 404\r\ncontent-type: text/plain\r\n\r\n";
+        MENTA::_finish([404, [], []]);
     } else {
         die "'${path}' を処理する方法がわかりません(@{[ MENTA::base_dir() . 'app/' . $path ]})";
     }
@@ -63,13 +64,14 @@ sub show_static {
         die "どうやら攻撃されているようだ: $path";
     }
     open my $fh, '<:raw', $path or die "ファイルを開けません: ${path}: $!";
-    my $res = HTTP::Engine::Response->new(
-        status => 200,
-        body   => do { local $/; <$fh> },
-    );
-    $res->content_type(guess_mime_type($path));
-    $res->header( Expires => CGI::Simple::Util::expires('+1d') );
-    CGI::ExceptionManager::detach($res);
+    die([
+        200,
+        [
+            'Content-Type' => guess_mime_type($path),
+            'Expires'      => CGI::Simple::Util::expires('+1d'),
+        ],
+        $fh,
+    ]);
 }
 
 sub guess_mime_type {

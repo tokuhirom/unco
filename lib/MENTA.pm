@@ -2,12 +2,15 @@ package MENTA;
 use strict;
 use warnings;
 use utf8;
-use CGI::ExceptionManager;
 use MENTA::Dispatch ();
+use Try::Tiny;
+require 'MENTA/Request.pm';
 require 'Class/Accessor/Lite.pm';
 require 'MENTA/Context.pm';
+require 'MENTA/MobileAgent.pm';
+require 'Text/MicroTemplate.pm';
 
-our $VERSION = '0.13';
+our $VERSION = '0.15';
 our $REQ;
 our $CONFIG;
 our $STASH;
@@ -22,11 +25,10 @@ sub import {
     our $context;
     sub context { $context }
     sub run_context {
-        my ($class, $config, $req, $engine, $code) = @_;
+        my ($class, $config, $req, $code) = @_;
         local $context = MENTA::Context->new(
             config   => $config,
             request  => $req,
-            __engine => $engine,
         );
         $code->();
     }
@@ -51,40 +53,67 @@ sub import {
             push @{$static_triggers->{triggers}->{$triggername}}, $code;
         }
     }
+    sub add_trigger_static {
+        my ($class, $triggername, $code) = @_;
+        push @{$static_triggers->{triggers}->{$triggername}}, $code;
+    }
 }
 
 # run as cgi
 sub run_menta {
     my ($class, $config) = @_;
-    $class->create_engine($config, 'MinimalCGI')->run;
+    require 'Plack/Server/CGI.pm';
+    my $app = $class->create_app($config);
+    Plack::Server::CGI->new->run($app);
 }
 
-sub create_engine {
-    my ($class, $config, $interface) = @_;
-
-    my $engine;
-    $engine = HTTP::Engine->new(
-        interface => {
-            module => $interface,
-            request_handler => sub {
-                my $req = shift;
-                local $MENTA::STASH;
-                CGI::ExceptionManager->run(
-                    callback => sub {
-                        MENTA->run_context(
-                            $config, $req, $engine, sub {
-                                MENTA->call_trigger('BEFORE_DISPATCH');
-                                MENTA::Dispatch->dispatch()
-                            }
-                        );
-                    },
-                    powered_by => '<strong>MENTA</strong>, Web Application Framework.',
-                    stacktrace_class => 'HTTPEngine',
-                    ($config->{menta}->{fatals_to_browser} ? () : (renderer => sub { "INTERNAL SERVER ERROR!" x 100 }))
-                );
+sub create_app {
+    my ($class, $config) = @_;
+    my $app = sub {
+        my $env = shift;
+        local $MENTA::STASH;
+        try {
+            my $req = MENTA::Request->new($env);
+            MENTA->run_context(
+                $config, $req, sub {
+                    MENTA->call_trigger('BEFORE_DISPATCH');
+                    MENTA::Dispatch->dispatch($env)
+                }
+            );
+        } catch {
+            if ($_ && ref $_ eq 'ARRAY') {
+                return $_;
+            } else {
+                die $_;
             }
-        }
-    );
+        };
+    };
+    if ($config->{menta}->{fatals_to_browser}) {
+        my $origapp = $app;
+        $app = sub {
+            my @args = @_;
+            my $res;
+            try {
+                local $SIG{__DIE__} = sub {
+                    if (ref $@ && ref $@ eq 'ARRAY') {
+                        $res = $@;
+                    } else {
+                        require 'Devel/StackTrace.pm';
+                        require 'Devel/StackTrace/AsHTML.pm';
+                        $res = [
+                            500,
+                            [ 'Content-Type' => 'text/html; charset=utf-8' ],
+                            [MENTA::Util::encode_output(Devel::StackTrace->new->as_html)]
+                        ];
+                    }
+                    die @_;
+                };
+                $origapp->(@args);
+            };
+            return $res;
+        };
+    }
+    return $app;
 }
 
 sub config () { MENTA->context->config }
@@ -111,18 +140,32 @@ sub unescape_html {
     return $_;
 }
 
+sub raw_string {
+    my $s = shift;
+    ref $s eq 'Text::MicroTemplate::EncodedString'
+        ? $s
+            : bless \$s, 'Text::MicroTemplate::EncodedString';
+}
+
 sub mt_cache_dir {
     # $> は $EFFECTIVE_USER_ID です。詳しくは perldoc perlvar を参照。
-    my $cachedir = config->{menta}->{cache_dir};
+    my $cachedir = MENTA->context->config->{menta}->{cache_dir};
     return $cachedir if $cachedir;
 
-    MENTA::Util::require_once('File/Spec.pm');
-    return File::Spec->catfile(File::Spec->tmpdir(), "menta.${MENTA::VERSION}.$>.mt_cache");
+    my $tmpdir = do {
+        if (-d '/tmp/') {
+            '/tmp/';
+        } else {
+            MENTA::Util::require_once('File/Spec.pm');
+            File::Spec->tmpdir()
+        }
+    };
+    return "$tmpdir/menta.${MENTA::VERSION}.$>.mt_cache";
 }
 
 sub base_dir {
-    config->{menta}->{__processed_base_dir} ||= do {
-        my $basedir = config->{menta}->{base_dir};
+    MENTA->context->config->{menta}->{__processed_base_dir} ||= do {
+        my $basedir = MENTA->context->config->{menta}->{base_dir};
         unless ($basedir) {
             require Cwd;
             $basedir = Cwd::cwd();
@@ -133,13 +176,13 @@ sub base_dir {
 }
 
 sub controller_dir {
-    config->{menta}->{controller_dir} ||= base_dir() . 'app/controller/';
-    config->{menta}->{controller_dir};
+    MENTA->context->config->{menta}->{controller_dir} ||= base_dir() . 'app/controller/';
+    MENTA->context->config->{menta}->{controller_dir};
 }
 
 sub data_dir {
-    config->{menta}->{data_dir} ||= base_dir() . 'app/data/';
-    config->{menta}->{data_dir};
+    MENTA->context->config->{menta}->{data_dir} ||= base_dir() . 'app/data/';
+    MENTA->context->config->{menta}->{data_dir};
 }
 
 sub __render_partial {
@@ -157,7 +200,7 @@ sub render {
 sub _finish {
     my $res = shift;
     MENTA->call_trigger('BEFORE_OUTPUT', $res);
-    CGI::ExceptionManager::detach($res);
+    die $res;
 }
 
 sub render_and_print {
@@ -166,46 +209,46 @@ sub render_and_print {
     my $out = MENTA::TemplateLoader::__load($tmpl, @params);
     $out = MENTA::Util::encode_output($out);
 
-    my $res = HTTP::Engine::Response->new(
-        body => $out,
-    );
-    $res->headers->content_type("text/html; charset=" . MENTA::Util::_charset());
-    _finish($res);
+    _finish([
+        200, [
+            'Content-Type' => "text/html; charset=" . MENTA::Util::_charset()
+        ], [$out]
+    ]);
 }
 
 sub redirect {
     my ($location, ) = @_;
+    Carp::confess("missing location for redirect") unless defined $location;
 
-    my $res = HTTP::Engine::Response->new(
-        status => 302,
-    );
-    $res->header('Location' => $location);
-    _finish($res);
+    _finish([302, ['Location' => $location], []]);
 }
 
 sub finalize {
     my $str = shift;
     my $content_type = shift || ('text/html; charset=' . MENTA::Util::_charset());
 
-    my $res = HTTP::Engine::Response->new(
-        status => 200,
-        body   => $str,
-    );
-    $res->headers->content_type($content_type);
-    _finish($res);
+    _finish([200, ['Content-Type' => $content_type], [$str]]);
 }
 
-sub param        { MENTA::Util::decode_input(MENTA->context->request->param(@_)) }
+sub param {
+    if (wantarray) {
+        map { MENTA::Util::decode_input($_) } MENTA->context->request->param(@_);
+    }
+    else {
+        MENTA::Util::decode_input(MENTA->context->request->param(@_));
+    }
+}
 sub upload       { MENTA->context->request->upload(@_) }
 sub mobile_agent { MENTA->context->mobile_agent() }
 sub current_url  {
     my $req = MENTA->context->request;
+    my $env = $req->{env};
     my $protocol = 'http';
-    my $port     = $ENV{SERVER_PORT} || 80;
+    my $port     = $env->{SERVER_PORT} || 80;
     my $url = "http://" . $req->header('Host');
     $url .= docroot();
-    $url .= "$ENV{PATH_INFO}";
-    $url .= '?' . $ENV{QUERY_STRING};
+    $url .= "$env->{PATH_INFO}";
+    $url .= '?' . $env->{QUERY_STRING};
 }
 
 {
@@ -223,11 +266,15 @@ sub current_url  {
 }
 
 sub is_post_request () {
-    my $method = $ENV{REQUEST_METHOD};
+    my $env = MENTA->context->request->{env};
+    my $method = $env->{REQUEST_METHOD};
     return $method eq 'POST';
 }
 
-sub docroot () { $ENV{SCRIPT_NAME} || '' }
+sub docroot () {
+    my $env = MENTA->context->request->{env};
+    $env->{SCRIPT_NAME} || ''
+}
 
 sub uri_for {
     my ($path, $query) = @_;
@@ -248,26 +295,25 @@ sub static_file_path {
     package MENTA::Util;
     # ユーティリティメソッドたち。
     # これらのメソッドは一般ユーザーはよぶべきではない。
-
-    # HTTP::MobileAgent::Plugin::Charset よりポート。
-    # cp932 の方が実績があるので優先させる方針。
-    # Shift_JIS とかじゃなくて cp932 にしとかないと、諸問題にひっかかりがちなので注意
     sub _mobile_encoding {
-        MENTA->context->{encoding} ||= sub {
-            my $ma = MENTA->context->mobile_agent();
-            return 'utf-8' if $ma->is_non_mobile;
-            return 'utf-8' if $ma->is_docomo && $ma->xhtml_compliant; # docomo の 3G 端末では UTF-8 の表示が保障されている
-            return 'utf-8' if $ma->is_softbank && $ma->is_type_3gc;   # SoftBank 3G の一部端末は CP932 だと絵文字を送ってこない不具合がある
-            return 'cp932';                                           # au は HTTPS のときに UTF-8 だと文字化ける場合がある
-        }->();
+        MENTA->context->{encoding} ||= do {
+            my $ua = MENTA->context->request->{env}->{HTTP_USER_AGENT};
+            MENTA::MobileAgent->detect_charset($ua);
+        };
     }
 
     # HTTP の入り口んとこで decode させる用
     sub decode_input {
         my ($txt, $fb) = @_;
         if (MENTA->context->config->{menta}->{support_mobile}) {
-            require_once('Encode.pm');
-            Encode::decode(_mobile_encoding(), $txt, $fb);
+            my $encoding = _mobile_encoding();
+            if ($encoding eq 'utf-8') {
+                utf8::decode($txt);
+                $txt;
+            } else {
+                require_once('Encode.pm');
+                Encode::decode($encoding, $txt, $fb);
+            }
         } else {
             utf8::decode($txt);
             $txt;
@@ -278,8 +324,14 @@ sub static_file_path {
     sub encode_output {
         my ($txt, $fb) = @_;
         if (MENTA->context->config->{menta}->{support_mobile}) {
-            require_once('Encode.pm');
-            Encode::encode(_mobile_encoding(), $txt, $fb);
+            my $encoding = _mobile_encoding();
+            if ($encoding eq 'utf-8') {
+                utf8::encode($txt);
+                $txt;
+            } else {
+                require_once('Encode.pm');
+                Encode::encode($encoding, $txt, $fb);
+            }
         } else {
             utf8::encode($txt);
             $txt;
@@ -324,11 +376,11 @@ sub static_file_path {
         };
         sub load_plugin {
             my $plugin = shift;
-            return if $plugin_loaded->{$plugin};
+            return $plugin_loaded->{$plugin} if $plugin_loaded->{$plugin};
             my $path = MENTA::base_dir() . "plugins/${plugin}.pl";
             require $path;
-            $plugin_loaded->{$plugin}++;
             my $package = $__menta_extract_package->($path) || '';
+            $plugin_loaded->{$plugin} = $package;
             die "${plugin} プラグインの中にパッケージ宣言がみつかりません" unless $package;
             no strict 'refs';
             for (
