@@ -6,7 +6,7 @@ use Data::Page;
 sub run {
     # XXX このへんの設定がもうちょいすっきりかけるといいね
     sql_dbh(@{ config()->{application}->{sql_dsn} });
-    my $page = sql_select_one('SELECT * FROM page WHERE id=? LIMIT 1', param('page_id'));
+    my ($page) = sql_select_all('SELECT * FROM page WHERE id=? LIMIT 1', param('page_id'));
     # $page->{body} was already sanitized by Filter::Scrubber
     ($page->{body}, my $pager) = sub {
         my $body = shift;
