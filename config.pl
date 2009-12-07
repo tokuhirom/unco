@@ -8,17 +8,11 @@
         # モバイル対応
         support_mobile => 1,
         # MENTA そのものをおいているディレクトリ。CGI の場合は設定しなくてもよい。末尾のスラッシュを忘れずに。
-        base_dir => '/var/www/menta/',
+        base_dir => '/var/www/unco/',
     },
     # あなたのアプリの設定
     application => {
         title => 'MENTA サンプルアプリ',
-        sqlitefile => '/var/www/menta/app/data/data.sqlite',
-        sql => {
-            dsn => 'dbi:SQLite:/var/www/menta/app/data/data.sqlite',
-        },
-        counter => {
-            file => '/var/www/menta/app/data/counter.txt'
-        },
+        sql_dsn => ['dbi:SQLite:/usr/local/webapp/unco/unco.db', '', ''],
     },
 }
