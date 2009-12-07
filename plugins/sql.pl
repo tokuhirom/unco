@@ -10,14 +10,14 @@ sub sql_dbh {
             undef $MENTA::STASH->{sql_dbh};
         }
         my $dbh = DBI->connect(@args) or die "DBに接続できません: $DBI::errstr";
-        $dbh->{unicode} = 1;
+        $dbh->{sqlite_unicode} = 1;
         $MENTA::STASH->{sql_dbh} = $dbh;
         $dbh;
     } else {
         $MENTA::STASH->{sql_dbh} ||= do {
             my $dsn = config->{application}->{sql}->{dsn} or die "設定に application.sql.dsn がありません";
             my $dbh = DBI->connect($dsn) or die "DBに接続できません: $DBI::errstr";
-            $dbh->{unicode} = 1;
+            $dbh->{sqlite_unicode} = 1;
             $dbh;
         };
     }
@@ -52,13 +52,6 @@ sub sql_select_all {
     undef $sth;
 
     return \@res;
-}
-
-sub sql_select_one {
-    my ($sql, @params) = @_;
-
-    my $rows = sql_select_all($sql, @params);
-    return $rows->[0];
 }
 
 sub sql_select_paginate {
