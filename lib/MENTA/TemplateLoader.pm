@@ -92,7 +92,6 @@ sub __update_cache {
     }
     $cache_path .= '.c';
 
-    warn "WRITING $cache_path";
     open my $fh, '>:utf8', $cache_path
         or die "キャッシュファイルを作れません: $cache_path($!)";
     print $fh $code;
