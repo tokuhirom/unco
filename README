@@ -61,5 +61,3 @@ flagged utf8 を返しておくれといいたい。
 
 HTML::ExtractContent は、いいかんじに抽出できるケースが多いのだけど、2ch まとめサイトとかの抽出に
 失敗することが多い印象。2ch まとめサイトは広告が多いというのも敗因の一つか。
-    e.g. http://kanasoku.blog82.fc2.com/blog-entry-9347.html
-
